@@ -49,37 +49,47 @@ enghoHogares.DECIPTHT,
 enghoCodigosGastos.DESCRIPCION
 FROM enghoGastos, enghoCodigosGastos, enghoHogares
 WHERE enghoGastos.DIVISION = enghoCodigosGastos.DIVISION
+AND enghoGastos.GRUPO = enghoCodigosGastos.GRUPO
+AND enghoGastos.CLASE = enghoCodigosGastos.CLASE
+AND enghoGastos.SUBCLASE = enghoCodigosGastos.SUBCLASE
+AND enghoGastos.ARTICULO = enghoCodigosGastos.ARTICULO
 AND enghoGastos.REGION = enghoHogares.REGION
 AND enghoGastos.SUBREGION = enghoHogares.SUBREGION
 AND enghoGastos.PROVINCIA = enghoHogares.PROVINCIA
 AND enghoGastos.CLAVE = enghoHogares.CLAVE
-AND enghoGastos.GRUPO = '120000'")
+AND enghoGastos.GRUPO IN ('120000', '119000', '118000', '117000',
+                      '116000', '115000', '114000', '113000',
+                      '112000', '111000') ")
+
+nrow(enghoGastos5)
+nrow(enghoGastos)
+View(enghoHogGasRules)
+
+pa <- is.null(enghoHogGasRules$TipoDeVivienda)
+pa1 <- enghoGastos5[enghoGastos5$JSITOCUP]
+pa <- enghoGastos5$JSITOCUP!=1 & enghoGastos5$JSITOCUP!=2 & enghoGastos5$JSITOCUP!=3
+is.numeric(enghoHogares$JSITOCUP)
+which(pa)
 
 enghoHogGasRules <- as.data.frame(enghoGastos5)
-enghoHogGasRules$RedCloacal <-enghoGastos5$CV1B01_C
-enghoHogGasRules$TipoDeVivienda <-enghoGastos5$CV1B02
-enghoHogGasRules$CombustibleCocina <-enghoGastos5$CH09
-enghoHogGasRules$OcupacionJefeHogar <-enghoHogares$JSITOCUP
-enghoHogGasRules$DecilIngreso <-enghoGastos5$DECIPTHT
-enghoHogGasRules$DESCALIMENTO <-enghoGastos5$DESCRIPCION
-
 enghoHogGasRules$RedCloacal <- as.factor(enghoHogGasRules$RedCloacal)
-enghoHogGasRules$TipoDeVivienda <- as.factor(enghoHogGasRules$TipoDeVivienda)
 enghoHogGasRules$CombustibleCocina <- as.factor(enghoHogGasRules$CombustibleCocina)
 enghoHogGasRules$OcupacionJefeHogar <- as.factor(enghoHogGasRules$OcupacionJefeHogar)
 enghoHogGasRules$DecilIngresor <- as.factor(enghoHogGasRules$DecilIngreso)
+enghoHogGasRules$DESCALIMENTO <- as.factor(enghoHogGasRules$DESCALIMENTO)
+
+enghoHogGasRules$RedCloacal <-enghoGastos5$CV1B01_C
+enghoHogGasRules$CombustibleCocina <-enghoGastos5$CH09
+enghoHogGasRules$OcupacionJefeHogar <-enghoGastos5$JSITOCUP
+enghoHogGasRules$DecilIngreso <-enghoGastos5$DECIPTHT
+enghoHogGasRules$DESCALIMENTO <-enghoGastos5$DESCRIPCION
+#reseta la memoria
+gc(reset = TRUE)
+gc()
+enghoHogGasRules$RedCloacal
 #red cloacal
 enghoHogGasRules$RedCloacal[enghoHogGasRules$RedCloacal == 1] <-"SI"
 enghoHogGasRules$RedCloacal[enghoHogGasRules$RedCloacal == 2] <-"NO"
-#tipo de vivienda
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 1] <-"CASA"
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 2] <-"RANCHO"
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 3] <-"CASILLA"
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 4] <-"DEPARTAMENTO"
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 5] <-"PIEZAINQUILINATO"
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 6] <-"PIEZAHOTEL"
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 7] <-"LOCAL"
-enghoHogGasRules$TipoDeVivienda[enghoHogGasRules$TipoDeVivienda == 8] <-"OTROS"
 #combustible cocina
 enghoHogGasRules$CombustibleCocina[enghoHogGasRules$CombustibleCocina == 1] <-"REDGAS"
 enghoHogGasRules$CombustibleCocina[enghoHogGasRules$CombustibleCocina == 2] <-"ZEPPELINGAS"
@@ -93,16 +103,16 @@ enghoHogGasRules$OcupacionJefeHogar[enghoHogGasRules$OcupacionJefeHogar == 1] <-
 enghoHogGasRules$OcupacionJefeHogar[enghoHogGasRules$OcupacionJefeHogar == 2] <-"OCUPADOASALARIADO"
 enghoHogGasRules$OcupacionJefeHogar[enghoHogGasRules$OcupacionJefeHogar == 3] <-"OCUPADOCUENTAPROPIA"
 #decil de ingreso
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 1] <-"1erDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 2] <-"2doDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 3] <-"3erDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 4] <-"4toDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 5] <-"5toDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 6] <-"6toDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 7] <-"7moDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 8] <-"8voDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 9] <-"9noDecil"
-enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 10] <-"10moDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '1'] <-"1erDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '2'] <-"2doDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '3'] <-"3erDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '4'] <-"4toDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '5'] <-"5toDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '6'] <-"6toDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '7'] <-"7moDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '8'] <-"8voDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '9'] <-"9noDecil"
+enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == '10'] <-"10moDecil"
 
 #REGION, SUBREGION, PROVINCIA, CLAVE es la primary key
 #comidas fuera del hogar 130000 GRUPO
@@ -122,7 +132,26 @@ enghoHogGasRules$DecilIngreso[enghoHogGasRules$DecilIngreso == 10] <-"10moDecil"
 #comidas fuera del hogar 131100 SUBCLASE
 #conedores escolares 131200 SUBCLASE
 #bebidas 120000 GRUPO
+gc()
+gc(reset = TRUE)
+colnames(enghoHogGasRules)
+nrow(enghoHogGasRules)
+head(enghoHogGasRules)
+enghoHogGasRules$CombustibleCocina <-as.factor(enghoHogGasRules$CombustibleCocina)
+enghoHogGasRules$DecilIngreso <-as.factor(enghoHogGasRules$DecilIngreso)
+write.csv(enghoHogGasRules, file = "ArticuloMadridAbril2020/datosengho2012Prep.csv", sep =";", col.names = TRUE)
+#disparo el arules
+#elimino las columnas que no necesito
+enghoHogGasRules$CombustibleCocina <-NULL
+pa <- is.null(enghoHogGasRules$DESCALIMENTO)
+which(pa)
+trans3 <- as(enghoHogGasRules, "transactions")
+rules <- apriori(trans3, parameter = list(sup = 0.1, 
+                                          conf = 0.1, target="rules",minlen=1))
 
+summary(rules)
+inspect(head(rules, n = 10, by = "lift"))
+inspect(rules)
 View(enghoGastos5)
 dim(enghoGastos2)
 write.csv(enghoGastos3, file = "gastosensaludEngho2012.csv")
